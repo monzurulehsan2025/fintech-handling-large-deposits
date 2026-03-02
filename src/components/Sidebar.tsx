@@ -5,12 +5,14 @@ import { usePathname } from 'next/navigation';
 import {
     Settings,
     ShieldCheck,
-    LayoutDashboard
+    LayoutDashboard,
+    Wallet
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Deposits', href: '/dashboard/deposits', icon: Wallet },
 ];
 
 export function Sidebar() {
