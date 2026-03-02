@@ -191,6 +191,4 @@ export const MOCK_BANK_UTILIZATION = [
     { name: 'First National Bank', currentAmount: 425000000, capacity: 500000000, healthy: true },
     { name: 'Silicon Valley Trust', currentAmount: 280000000, capacity: 300000000, healthy: false },
     { name: 'Midwest Savings', currentAmount: 150000000, capacity: 250000000, healthy: true },
-    { name: 'Pacific Commerce', currentAmount: 310000000, capacity: 400000000, healthy: true },
-    { name: 'Chase Bank', currentAmount: 220000000, capacity: 500000000, healthy: true },
 ];
