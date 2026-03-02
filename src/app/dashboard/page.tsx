@@ -1,7 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { StatCard } from '@/components/StatCard';
-import { MOCK_KPIS, MOCK_CHART_DATA, MOCK_ACTIVITIES, MOCK_BANK_UTILIZATION } from '@/lib/mockData';
+import { fetchKPIS, fetchChartData, fetchActivities, fetchBankUtilization } from '@/lib/api';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { Activity as ActivityIcon, ShieldCheck, AlertTriangle } from 'lucide-react';
@@ -12,6 +13,42 @@ const INSURABILITY_DATA = [
 ];
 
 export default function DashboardPage() {
+    const [kpis, setKpis] = useState<any[]>([]);
+    const [chartData, setChartData] = useState<any[]>([]);
+    const [activities, setActivities] = useState<any[]>([]);
+    const [bankUtilization, setBankUtilization] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [kpisData, chart, acts, banks] = await Promise.all([
+                    fetchKPIS(),
+                    fetchChartData(),
+                    fetchActivities(),
+                    fetchBankUtilization()
+                ]);
+                setKpis(kpisData);
+                setChartData(chart);
+                setActivities(acts);
+                setBankUtilization(banks);
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex h-96 items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-8 pb-12">
             <div>
@@ -20,7 +57,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {MOCK_KPIS.map((kpi) => (
+                {kpis.map((kpi) => (
                     <StatCard
                         key={kpi.label}
                         label={kpi.label}
@@ -36,7 +73,7 @@ export default function DashboardPage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-6">Deposits Over Time</h3>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={MOCK_CHART_DATA}>
+                            <AreaChart data={chartData}>
                                 <defs>
                                     <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.1} />
@@ -82,10 +119,10 @@ export default function DashboardPage() {
                     </h3>
                     <div className="flow-root">
                         <ul role="list" className="-mb-8">
-                            {MOCK_ACTIVITIES.map((activity, idx) => (
+                            {activities.map((activity: any, idx: number) => (
                                 <li key={activity.id}>
                                     <div className="relative pb-8">
-                                        {idx !== MOCK_ACTIVITIES.length - 1 ? (
+                                        {idx !== activities.length - 1 ? (
                                             <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
                                         ) : null}
                                         <div className="relative flex space-x-3">
@@ -161,9 +198,8 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="rounded-xl border bg-white p-6 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-6">Partner Bank Capacity</h3>
                     <div className="space-y-4">
-                        {MOCK_BANK_UTILIZATION.map((bank) => {
+                        {bankUtilization.map((bank: any) => {
                             const utilization = (bank.currentAmount / bank.capacity) * 100;
                             return (
                                 <div key={bank.name} className="space-y-2">
