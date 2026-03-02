@@ -14,10 +14,6 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Deposits', href: '/dashboard/deposits', icon: Wallet },
-    { name: 'Alerts', href: '/dashboard/alerts', icon: Bell },
-    { name: 'Partner Banks', href: '#', icon: ShieldCheck },
-    { name: 'Reports', href: '#', icon: BarChart3 },
 ];
 
 export function Sidebar() {
